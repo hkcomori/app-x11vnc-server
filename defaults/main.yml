@@ -1,0 +1,11 @@
+---
+   # Title: app-x11vnc-server
+   #
+   # Author: Luc Rutten
+   # Version: 1.0
+   # File: defaults/main.yml
+   #
+   # Description:
+   #   Remote Control Server
+
+   vnc_pass : Welcome123
