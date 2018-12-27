@@ -1,39 +1,18 @@
----
-  # Title: app-x11vnc-server
+  # Tasks: Configure UVNC  for Ubuntu systems
   #
-  # Author: Luc Rutten
-  # Version: 1.0
-  # File: tasks/main.yml
-  #
-  # Description:
-  #   Remote support
-  #
-  # Source:
-  #   - http://c-nergy.be/blog/?p=8984
+  # Supported OS:
+  #   - Ubuntu 16.04LTSi
+  #   - Ubuntu 18.04LTSi
 
-  - name: "Install packages"
-    apt:
-      name: "{{ item }}"
-      update_cache: yes
-      state: present
-    with_items:
-      - x11vnc
-  
-  - name: "Store password"
-    raw: "x11vnc -storepasswd {{ vnc_pass }} /etc/x11vnc.pass"
+  - name: "For OS: Ubuntu 16.04LTS, Arch: amd64"
+    import_tasks: ubuntu-1604-amd64.yml
+    when:
+      - ansible_distribution_version ==  "16.04"
+      - ansible_architecture == "x86_64"
 
-  - name: "Set permissions on /etc/x11vnc.pass"
-    file:
-     path: "/etc/x11vnc.pass"
-     mode: 0644
+  - name: "For OS: Ubuntu 18.04LTS, Arch: amd64"
+    import_tasks: ubuntu-1804-amd64.yml
+    when:
+      - ansible_distribution_version ==  "18.04"
+      - ansible_architecture == "x86_64"
 
-  - name: "Transfer x11vnc.service.j2 to /lib/systemd/system/x11vnc.service"
-    template:
-      src: x11vnc.service.j2
-      dest: /lib/systemd/system/x11vnc.service
-
-  - name: "Enable service"
-    systemd:
-      name: x11vnc.service
-      enabled: true
-      state: restarted

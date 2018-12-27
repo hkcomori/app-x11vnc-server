@@ -1,0 +1,54 @@
+---
+  # Title: app-x11vnc-server
+  #
+  # Author: Luc Rutten
+  # Version: 1.0
+  # File: tasks/main.yml
+  #
+  # Description:
+  #   Remote support
+  #
+  # Source:
+  #   - http://c-nergy.be/blog/?p=8984
+
+  - name: "Install packages"
+    apt:
+      name: "{{ packages }}"
+      update_cache: yes
+      state: present
+    vars:
+      packages:
+      - x11vnc
+
+  - name: "Store password"
+    raw: "x11vnc -storepasswd {{ vnc_pass }} /etc/x11vnc.pass"
+
+  - name: "Set permissions on /etc/x11vnc.pass"
+    file:
+     path: "/etc/x11vnc.pass"
+     mode: 0644
+
+  - name: "Transfer x11vnc.service.j2 to /lib/systemd/system/x11vnc.service"
+    template:
+      src: x11vnc.service.j2
+      dest: /lib/systemd/system/x11vnc.service
+
+  - name: "Enable service"
+    systemd:
+      name: x11vnc.service
+      enabled: true
+      state: restarted
+
+  - name: "Allow traffic on port 5900/tcp"
+    ufw:
+      rule: allow
+      port: 5900
+      proto: tcp
+
+  - name: "Remove whisker menu entry for allusers (except owner and group)"
+    file:
+      path: "/usr/share/applications/x11vnc.desktop"
+      mode: 0750
+      owner: root
+      group: root
+
