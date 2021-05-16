@@ -9,3 +9,5 @@
    #   Remote Control Server
 
    vnc_pass : Welcome123
+
+   vnc_options : -auth guess -forever -loop -noxdamage -repeat -rfbauth /etc/x11vnc.pass -rfbport 5900 -shared
